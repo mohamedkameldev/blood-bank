@@ -29,6 +29,12 @@ class Client extends Authenticatable
         'pin_code'
     ];
 
+    // Relations: 
+    public function bloodType()
+    {
+        return $this->belongsTo(BloodType::class);
+    }
+
     public function city()
     {
         return $this->belongsTo(City::class);
@@ -38,4 +44,14 @@ class Client extends Authenticatable
     // {
     //     return $this->belongsTo(City::class);
     // }
+
+    public function governorates()
+    {
+        return $this->belongsToMany(Governorate::class);
+    }
+
+    public function bloodTypes()
+    {
+        return $this->belongsToMany(BloodType::class);
+    }
 }

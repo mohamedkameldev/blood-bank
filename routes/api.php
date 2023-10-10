@@ -1,10 +1,9 @@
 <?php
 
-use App\Http\Controllers\Api\MainController;
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ContactController;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\MainController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,22 +21,23 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::group(['prefix' => 'v1'], function (){
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('reset-password', [AuthController::class, 'resetPassword']);
-    Route::post('new-password', [AuthController::class, 'newPassword']);
 
-
-    Route::get('gov', [MainController::class, 'governrates']);    
-    Route::get('cities', [MainController::class, 'cities']);
-    Route::get('blood-types', [MainController::class, 'bloodTypes']);
-    Route::get('settings', [MainController::class, 'settings']);
-    Route::apiResource('contact', ContactController::class);
-
-
-    Route::group(['middleware' => 'auth:api'], function(){
-        Route::post('change-password', [AuthController::class, 'changePassword']);
-        Route::get('posts', [MainController::class, 'posts']);
+    Route::group(['prefix' => 'auth', 'controller' => AuthController::class], function(){
+        Route::post('register', 'register');
+        Route::post('login', 'login');
+        Route::post('reset-password', 'resetPassword');
+        Route::post('new-password', 'newPassword');
+        Route::post('change-password', 'changePassword')->middleware('auth:api');
+        Route::post('profile', 'profile')->middleware('auth:api');
     });
 
+    Route::group(['controller' => MainController::class], function(){
+        Route::get('govs', 'governrates');
+        Route::get('cities', 'cities');
+        Route::get('blood-types', 'bloodTypes');
+        Route::get('settings', 'settings');
+        Route::get('categories', 'categories');
+        Route::get('posts', 'posts');
+        Route::post('send-message', 'storeContact')->middleware('auth:api');
+    });
 });

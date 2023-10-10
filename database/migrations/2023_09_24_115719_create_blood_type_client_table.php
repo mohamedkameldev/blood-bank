@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('blood_type_client', function (Blueprint $table) {
             $table->foreignId('client_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('blood_type_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
-            $table->primary('client_id', 'blood_type_id');
+            $table->primary(['client_id', 'blood_type_id']);
 
             $table->timestamps();
         });

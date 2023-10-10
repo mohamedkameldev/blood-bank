@@ -4,14 +4,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BloodType;
+use App\Models\Category;
 use App\Models\City;
+use App\Models\Contact;
 use App\Models\Governorate;
 use App\Models\Post;
 use App\Models\Setting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class MainController extends Controller
 {
+    public function categories()
+    {
+        $categories = Category::all();
+        return apiResponse(200, 'succes', $categories);
+    }
+
     public function posts()
     {
         $posts = Post::with('category')->get();
@@ -62,5 +71,26 @@ class MainController extends Controller
     {
         $settings = Setting::all();
         return apiResponse(1, 'كل البيانات الخاصه بالموقع', $settings);
+    }
+
+    public function storeContact(Request $request)
+    {
+        $validator = validator($request->all(), [
+            'name' => 'required',
+            'phone' => 'required|numeric',
+            'subject' => 'required',
+            'message' => 'required'
+        ]);
+
+        if($validator->fails())
+            return apiResponse(1,$validator->errors()->first(), $validator->errors());
+
+
+        $request['email'] = auth()->user()->email;
+        // $request->merge(['email' => auth()->user()->email]);
+        // dd($request->all());
+
+        $contact = Contact::create($request->all());
+        return apiResponse(1, 'تمت الإضافه بنجاح', $contact);
     }
 }

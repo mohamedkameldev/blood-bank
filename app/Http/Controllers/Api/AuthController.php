@@ -4,17 +4,67 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Mail\ResetPassword;
+use App\Models\City;
 use App\Models\Client;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Validation\Rule;
 
 use function Laravel\Prompts\password;
 
 class AuthController extends Controller
 {
+    // usually these 2 operations(get the user data and edit it) 
+    // are been seperated to 2 distincit services
+    public function profile(Request $request)
+    {
+        // dd($request->user());
+            // only work under middlewares (to know which table is the table of the current user(from the middleware itself))
+        // dd(auth()->guard('api')->user());
+                // always work
+
+        // dd(Auth::user());
+        // dd(auth()->user());
+        // dd($this->user());                   // doesn't work
+
+        $validator = validator($request->all(), [
+            'password' => 'confirmed', 
+            'email' => Rule::unique('clients')->ignore($request->user()->id),                
+            'phone' => Rule::unique('clients')->ignore($request->user()->id)
+        ]);
+
+        if($validator->fails())
+        {
+            return apiResponse(0, $validator->errors()->first(), $validator->errors());
+        }
+
+        $client = $request->user();
+        $client->update($request->all());
+
+        if($request->has('password'))
+        {
+            $client->password = bcrypt($request->password);
+        }
+
+        $client->save();
+
+
+        if($request->has('governorate_id'))
+        {
+            $client->governorates()->sync([2, 4]);
+        }
+
+        if($request->has('blood_type_id'))
+        {
+            $client->bloodTypes()->sync([2, 3, 4]);
+        }
+
+        return apiResponse(1, 'updates has been updated succesfully', $client);
+    }
+
     public function register(Request $request)
     {
         $validator = validator($request->all(), [
@@ -34,7 +84,8 @@ class AuthController extends Controller
         }
 
 
-        $request->merge(['password' => bcrypt($request->password)]);
+        $request['password'] = Hash::make($request->password);
+        // $request->merge(['password' => bcrypt($request->password)]);
         $client = Client::create($request->all());
 
         // $inputs = $request->all();
@@ -43,6 +94,13 @@ class AuthController extends Controller
         
         $client->api_token = Str::random(60);
         $client->save();
+
+        // By Default: Link user to his blood type and governorate in the Notification settings
+        $city = City::where('id', $request->city_id)->first();
+        $client->governorates()->attach($city->governorate_id);
+
+
+        $client->bloodTypes()->attach($request->blood_type_id);
         
         return apiResponse(1, 'تم الإضافة بنجاح', [
             'api_token' => $client->api_token, 
