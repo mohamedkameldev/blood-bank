@@ -4,29 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\BloodType;
-use App\Models\Category;
 use App\Models\City;
 use App\Models\Contact;
 use App\Models\Governorate;
-use App\Models\Post;
 use App\Models\Setting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MainController extends Controller
 {
-    public function categories()
-    {
-        $categories = Category::all();
-        return apiResponse(200, 'succes', $categories);
-    }
-
-    public function posts()
-    {
-        $posts = Post::with('category')->get();
-        return apiResponse(200, 'succes', $posts);
-    }
-
     public function governrates()
     {
         $governorates = Governorate::select(['id', 'name'])->with('cities')->get();

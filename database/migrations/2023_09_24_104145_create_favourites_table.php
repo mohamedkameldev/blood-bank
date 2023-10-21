@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('client_post', function (Blueprint $table) {
-            $table->id();
+        Schema::create('favourites', function (Blueprint $table) {
             $table->foreignId('client_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('post_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
+            $table->primary(['client_id', 'post_id']);
             $table->timestamps();
         });
     }

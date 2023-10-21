@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class Client extends Authenticatable
@@ -12,7 +13,6 @@ class Client extends Authenticatable
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'name',
         'phone',
         'email',
@@ -40,18 +40,18 @@ class Client extends Authenticatable
         return $this->belongsTo(City::class);
     }
 
-    // public function bloodType()
-    // {
-    //     return $this->belongsTo(City::class);
-    // }
-
+    public function bloodTypes()
+    {
+        return $this->belongsToMany(BloodType::class);
+    }
+    
     public function governorates()
     {
         return $this->belongsToMany(Governorate::class);
     }
 
-    public function bloodTypes()
+    public function favourites(): BelongsToMany
     {
-        return $this->belongsToMany(BloodType::class);
+        return $this->belongsToMany(Post::class, 'favourites', 'client_id', 'post_id');
     }
 }

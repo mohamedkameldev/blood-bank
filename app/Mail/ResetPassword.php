@@ -30,8 +30,8 @@ class ResetPassword extends Mailable
     {
         return new Envelope(
             // if you aren't writing them, they will be added automatically form the env file(MAIL_FROM_ADDRESS and MAIL_FROM_NAME).
-            from: new Address('mokammel0000@gmail.com', 'Blood Band Client Service'),
-            subject: 'Test mail',
+            from: new Address('blood-bank@gmail.com', 'Blood Band Client-Service'),
+            subject: 'Reset Password',
         );
     }
 

@@ -10,7 +10,6 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id',
         'notification_settings_text',
         'about_app',
         'phone',

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MainController;
+use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -36,8 +37,13 @@ Route::group(['prefix' => 'v1'], function (){
         Route::get('cities', 'cities');
         Route::get('blood-types', 'bloodTypes');
         Route::get('settings', 'settings');
+        Route::post('send-message', 'storeContact')->middleware('auth:api');
+    });
+
+    Route::group(['controller' => PostController::class], function(){
         Route::get('categories', 'categories');
         Route::get('posts', 'posts');
-        Route::post('send-message', 'storeContact')->middleware('auth:api');
+        Route::get('favourites', 'favourites')->middleware('auth:api');
+        Route::post('toggle-fav', 'toggleFav')->middleware('auth:api');
     });
 });
