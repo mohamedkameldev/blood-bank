@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Governorate;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -13,26 +14,20 @@ class GovernorateSeeder extends Seeder
      */
     public function run(): void
     {
-        // Using the Eleqouent ORM:
-        // Governorate::create([
-        //     'name' => 'Mansoura',
-        //     // In this way, we added values using Model, then timestamps will be added automatically...
-        // ]);
-        //------------------------------------------------------------------------------------------------------
+        $govs = [
+            [ 'name' => 'Cairo'],
+            [ 'name' => 'Giza'],
+            [ 'name' => 'Alex'],
+            [ 'name' => 'Mansoura'],
+        ];
 
-        // Using Query Builder: 
-        // Governorates: 
-        DB::table('governorates')->insert([
-            'name' => 'Cairo'
-        ]);
-        DB::table('governorates')->insert([
-            'name' => 'Giza'
-        ]);
-        DB::table('governorates')->insert([
-            'name' => 'Alex'
-        ]);
-        DB::table('governorates')->insert([
-            'name' => 'Mansoura'
-        ]);
+        foreach($govs as $gov){
+            // Using Query Builder:
+            // DB::table('governorates')->insert($gov);
+
+            // Using the Eleqouent ORM:
+            Governorate::create($gov);
+        }
+        
     }
 }

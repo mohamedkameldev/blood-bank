@@ -21,44 +21,35 @@ class AuthController extends Controller
     // are been seperated to 2 distincit services
     public function profile(Request $request)
     {
-        // dd($request->user());
-            // only work under middlewares (to know which table is the table of the current user(from the middleware itself))
-        // dd(auth()->guard('api')->user());
-                // always work
-
-        // dd(Auth::user());
-        // dd(auth()->user());
+        // dd(Auth::user());                    // use it if there is no multiauthentication
+        // dd(auth()->user());                  // use it if there is no multiauthentication
+        // dd(auth()->guard('api')->user());    // always work
+        // dd($request->user());                // only work under middlewares (to know which table is the table of the current user(from the middleware itself))
         // dd($this->user());                   // doesn't work
 
         $validator = validator($request->all(), [
-            'password' => 'confirmed',          // If user want to change his password
+            // 'name' => 'required',
             'email' => Rule::unique('clients')->ignore($request->user()->id),                
-            'phone' => Rule::unique('clients')->ignore($request->user()->id)
+            'phone' => Rule::unique('clients')->ignore($request->user()->id),
+            'd_o_b' => 'date_format:Y-m-d|before:2010-12-30',
+            'last_donation_date' => 'date_format:Y-m-d|before_or_equal:today',
+            'city_id' => 'integer|exists:cities,id',
+            'blood_type_id' => 'integer|exists:blood_types,id',
         ]);
 
-        if($validator->fails())
-        {
+        if($validator->fails()){
             return apiResponse(0, $validator->errors()->first(), $validator->errors());
         }
 
         $client = $request->user();
 
-        if($request->password || $request->governorate_id || $request->blood_type_id){
+        if($request->except('api_token')){
+            
             $client->update($request->all());
 
-            if($request->has('password'))
-                $client->password = bcrypt($request->password);
-            
-            $client->save();
-
-            if($request->has('governorate_id'))
-                $client->governorates()->sync($request->governorate_id);
-
-            if($request->has('blood_type_id'))
-                $client->bloodTypes()->sync($request->blood_type_id);
-
-            return apiResponse(1, 'updates has been updated succesfully', $client);
+            return apiResponse(1, 'تم تحديث بيانات المستخدم بنجاح', $client);
         }
+
         return apiResponse(1, 'بيانات المستخدم', $client);
 
     }

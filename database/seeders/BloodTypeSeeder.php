@@ -13,30 +13,18 @@ class BloodTypeSeeder extends Seeder
      */
     public function run(): void
     {
-        // Blood Types: 
-        DB::table('blood_types')->insert([
-            'name' => 'A+'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'A-'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'B+'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'B+-'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'O+'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'O+-'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'AB+'
-        ]);
-        DB::table('blood_types')->insert([
-            'name' => 'AB-'
-        ]);
+        $bloodTypes = [
+            ['name' => 'A+'],
+            ['name' => 'A-'],
+            ['name' => 'B+'],
+            ['name' => 'B-'],
+            ['name' => 'AB+'],
+            ['name' => 'AB-'],
+            ['name' => 'O+'],
+            ['name' => 'O-'],
+        ];
+        foreach($bloodTypes as $type){
+            DB::table('blood_types')->insert($type);
+        }
     }
 }

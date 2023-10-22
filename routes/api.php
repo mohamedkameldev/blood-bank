@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DonationRequestController;
 use App\Http\Controllers\Api\MainController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
@@ -43,7 +44,14 @@ Route::group(['prefix' => 'v1'], function (){
     Route::group(['controller' => PostController::class], function(){
         Route::get('categories', 'categories');
         Route::get('posts', 'posts');
+        Route::get('posts/search', 'search');
+        Route::get('post/{id}', 'post');
         Route::get('favourites', 'favourites')->middleware('auth:api');
         Route::post('toggle-fav', 'toggleFav')->middleware('auth:api');
+    });
+
+    Route::controller(DonationRequestController::class)->group(function(){
+        Route::get('donation-requests', 'index'); 
+        Route::post('create-donation', 'create'); 
     });
 });

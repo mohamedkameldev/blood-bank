@@ -13,22 +13,16 @@ class CitySeeder extends Seeder
      */
     public function run(): void
     {
-        // Cities:
-        DB::table('cities')->insert([
-            'name' => 'Mansoura',
-            'governorate_id' => '4'
-        ]);
-        DB::table('cities')->insert([
-            'name' => 'Tagamo3 5',
-            'governorate_id' => '1'
-        ]);
-        DB::table('cities')->insert([
-            'name' => 'Bahari',
-            'governorate_id' => '3'
-        ]);
-        DB::table('cities')->insert([
-            'name' => 'alHaram',
-            'governorate_id' => '2'
-        ]);
+        $cities = [
+            [ 'name' => 'Mansoura', 'governorate_id' => '4'],
+            [ 'name' => 'Tagamo3 5', 'governorate_id' => '1'],
+            [ 'name' => 'Bahari', 'governorate_id' => '3'],
+            [ 'name' => 'alHaram', 'governorate_id' => '2'],
+        ];
+        
+        foreach($cities as $city)
+        {
+            DB::table('cities')->insert($city);
+        }
     }
 }
