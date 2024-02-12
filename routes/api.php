@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DonationRequestController;
 use App\Http\Controllers\Api\MainController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -50,8 +51,17 @@ Route::group(['prefix' => 'v1'], function (){
         Route::post('toggle-fav', 'toggleFav')->middleware('auth:api');
     });
 
-    Route::controller(DonationRequestController::class)->group(function(){
-        Route::get('donation-requests', 'index'); 
-        Route::post('create-donation', 'create'); 
+    Route::controller(DonationRequestController::class)->prefix('donation')->middleware('auth:api')->group(function(){
+        Route::get('requests', 'index'); 
+        Route::get('request/{id}', 'show'); 
+        Route::post('create', 'create'); 
+    });
+
+    Route::controller(NotificationController::class)->prefix('notification')->middleware('auth:api')->group(function(){
+        Route::get('list', 'index')->middleware('auth:api');
+        Route::get('count', 'count')->middleware('auth:api');
+        Route::post('register-token', 'registerToken');
+        Route::post('remove-token', 'removeToken');
+        Route::post('settings', 'notificationSettings')->middleware('auth:api');
     });
 });

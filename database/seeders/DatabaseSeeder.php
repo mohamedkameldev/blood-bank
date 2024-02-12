@@ -30,7 +30,9 @@ class DatabaseSeeder extends Seeder
             ClientSeeder::class, 
             CategorySeeder::class, 
             PostSeeder::class,
-            SettingSeeder::class
+            SettingSeeder::class, 
+            ClientGovernorateSeeder::class, 
+            BloodTypeClientSeeder::class
         ]);
          
 

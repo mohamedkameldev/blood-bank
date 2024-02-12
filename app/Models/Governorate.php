@@ -17,5 +17,9 @@ class Governorate extends Model
         return $this->hasMany(City::class);
     }
 
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class);
+    }
 
 }

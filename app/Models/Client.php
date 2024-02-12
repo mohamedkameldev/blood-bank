@@ -54,4 +54,14 @@ class Client extends Authenticatable
     {
         return $this->belongsToMany(Post::class, 'favourites', 'client_id', 'post_id');
     }
+
+    public function notifications()
+    {
+        $this->belongsToMany(Notification::class)->withPivot('is_read');
+    }
+
+    public function tokens()
+    {
+        return $this->hasMany(Token::class);
+    }
 }

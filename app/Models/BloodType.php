@@ -12,4 +12,10 @@ class BloodType extends Model
     protected $fillable = [
         'name'
     ];
+
+    // Relations
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class);
+    }
 }
