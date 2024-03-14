@@ -1,6 +1,5 @@
 <?php
 
-
 function apiResponse($status, $message, $data = null)
 {
     $response = [
